@@ -1,10 +1,10 @@
-# Mini Project 2 — Vocabulary Learning App
+# OpenCloud AI Vocabulary Assistant
 
 ## Overview
 
-This is a full stack CRUD application for learning vocabulary. Users can organize vocabulary into word lists and manage individual word cards.
+This is a full-stack AI vocabulary learning assistant designed for the OpenCloud course. The project helps users organize vocabulary into word lists, manage individual word cards, and review definitions through a simple web interface.
 
-The app has a Next.js frontend, a FastAPI backend, and a PostgreSQL database.
+The app uses a Next.js frontend, a FastAPI backend, and a PostgreSQL database. It demonstrates how a cloud-based learning tool can connect a user interface, backend API, and structured vocabulary data.
 
 ## Features
 
@@ -14,6 +14,7 @@ The app has a Next.js frontend, a FastAPI backend, and a PostgreSQL database.
 * Create, update, and delete words
 * Store data in PostgreSQL
 * Connect frontend and backend with API requests
+* Demonstrate a cloud-ready full-stack learning application structure
 
 ## Tech Stack
 
