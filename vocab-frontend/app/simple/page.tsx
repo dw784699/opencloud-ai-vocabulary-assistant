@@ -1,215 +1,159 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { simpleVocabulary, type VocabularyWord } from "../../lib/simpleVocabulary";
+import { useState } from "react";
 
-export default function SimpleVocabularyPage() {
-  const [searchWord, setSearchWord] = useState("");
-  const [result, setResult] = useState<VocabularyWord | null>(null);
-  const [message, setMessage] = useState("");
-  const [wordBank, setWordBank] = useState<VocabularyWord[]>([]);
+const learnWords = [
+  {
+    word: "Cloud",
+    level: "Basic Word",
+    englishMeaning:
+      "A system that stores data and runs applications on the internet instead of on a local computer.",
+    chineseMeaning: "云；通过互联网存储数据和运行应用程序的系统。",
+    example: "Many companies use cloud services to store files and run apps.",
+  },
+  {
+    word: "Server",
+    level: "Basic Word",
+    englishMeaning:
+      "A computer or system that provides services, data, or applications to other computers.",
+    chineseMeaning: "服务器；为其他电脑提供服务、数据或应用程序的系统。",
+    example: "A website needs a server to run online.",
+  },
+  {
+    word: "API",
+    level: "Core Word",
+    englishMeaning:
+      "A way for different software applications to communicate with each other.",
+    chineseMeaning: "应用程序接口；不同软件之间互相沟通的方式。",
+    example: "The frontend uses an API to get data from the backend.",
+  },
+  {
+    word: "Deploy",
+    level: "Core Word",
+    englishMeaning: "To publish an application so users can access it online.",
+    chineseMeaning: "部署；把应用发布到网上，让用户可以访问。",
+    example: "After testing the app, the developer deployed it to the cloud.",
+  },
+];
 
-  useEffect(() => {
-    const savedWords = localStorage.getItem("simple-word-bank");
+export default function LearnPage() {
+  const [visibleChineseWords, setVisibleChineseWords] = useState<string[]>([]);
 
-    if (savedWords) {
-      setWordBank(JSON.parse(savedWords));
-    }
-  }, []);
+  function toggleChinese(wordText: string) {
+    const alreadyVisible = visibleChineseWords.includes(wordText);
 
-  useEffect(() => {
-    localStorage.setItem("simple-word-bank", JSON.stringify(wordBank));
-  }, [wordBank]);
-
-  function handleSearch() {
-    const keyword = searchWord.trim().toLowerCase();
-
-    if (!keyword) {
-      setResult(null);
-      setMessage("Please enter an English cloud vocabulary word.");
-      return;
-    }
-
-    const foundWord = simpleVocabulary.find(
-      (item) => item.word.toLowerCase() === keyword
-    );
-
-    if (!foundWord) {
-      setResult(null);
-      setMessage(
-        "Word not found. Try: cloud, server, storage, database, security, deploy, API."
+    if (alreadyVisible) {
+      setVisibleChineseWords(
+        visibleChineseWords.filter((item) => item !== wordText)
       );
-      return;
+    } else {
+      setVisibleChineseWords([...visibleChineseWords, wordText]);
     }
-
-    setResult(foundWord);
-    setMessage("");
-  }
-
-  function addToWordBank() {
-    if (!result) return;
-
-    const alreadySaved = wordBank.some(
-      (item) => item.word.toLowerCase() === result.word.toLowerCase()
-    );
-
-    if (alreadySaved) {
-      setMessage("This word is already in your word bank.");
-      return;
-    }
-
-    setWordBank([...wordBank, result]);
-    setMessage("Word added to your word bank.");
-  }
-
-  function clearWordBank() {
-    setWordBank([]);
-    setMessage("Word bank cleared.");
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">
-      <section className="mx-auto max-w-5xl">
-        <div className="mb-10 rounded-3xl border border-white/10 bg-white/10 p-8 shadow-xl">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-cyan-300">
-            Cloud Vocabulary Assistant
+    <main className="min-h-screen bg-slate-950 text-white">
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <div className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.4em] text-purple-400">
+            📘 Learn
           </p>
 
-          <h1 className="mb-4 text-4xl font-bold">
-            Learn Cloud English Vocabulary Faster
+          <h1 className="mt-6 text-5xl font-bold tracking-tight">
+            Learn Cloud Vocabulary
           </h1>
 
-          <p className="max-w-3xl text-lg text-slate-300">
-            Enter an English cloud computing word, see the Chinese meaning,
-            learn an example sentence, and save difficult words to your personal
-            word bank for daily review.
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+            Study important English vocabulary used in cloud computing. Click
+            the button to show Chinese meanings when needed.
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <section className="rounded-3xl border border-white/10 bg-white/10 p-6">
-            <h2 className="mb-4 text-2xl font-bold">1. Translate a Word</h2>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <input
-                value={searchWord}
-                onChange={(event) => setSearchWord(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleSearch();
-                  }
-                }}
-                placeholder="Try: server, storage, security..."
-                className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400"
-              />
-
-              <button
-                onClick={handleSearch}
-                className="rounded-xl bg-cyan-400 px-5 py-3 font-bold text-slate-950 hover:bg-cyan-300"
-              >
-                Search
-              </button>
-            </div>
-
-            {message && (
-              <p className="mt-4 rounded-xl bg-slate-900 p-3 text-sm text-yellow-200">
-                {message}
-              </p>
-            )}
-
-            {result && (
-              <div className="mt-6 rounded-2xl border border-cyan-400/30 bg-slate-900 p-5">
-                <p className="mb-2 text-sm uppercase tracking-widest text-cyan-300">
-                  Search Result
-                </p>
-
-                <h3 className="mb-2 text-3xl font-bold capitalize">
-                  {result.word}
-                </h3>
-
-                <p className="mb-3 text-xl text-green-300">
-                  Chinese: {result.chinese}
-                </p>
-
-                <p className="mb-4 text-slate-300">{result.meaning}</p>
-
-                <div className="rounded-xl bg-white/10 p-4">
-                  <p className="mb-1 text-sm font-semibold text-cyan-300">
-                    2. Example Sentence
-                  </p>
-                  <p className="text-slate-100">{result.example}</p>
-                </div>
-
-                <button
-                  onClick={addToWordBank}
-                  className="mt-5 rounded-xl bg-green-400 px-5 py-3 font-bold text-slate-950 hover:bg-green-300"
-                >
-                  Add to My Word Bank
-                </button>
-              </div>
-            )}
-          </section>
-
-          <section className="rounded-3xl border border-white/10 bg-white/10 p-6">
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <h2 className="text-2xl font-bold">3. My Word Bank</h2>
-
-              <button
-                onClick={clearWordBank}
-                className="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/10"
-              >
-                Clear
-              </button>
-            </div>
-
-            <p className="mb-5 text-slate-300">
-              Save difficult words here and review them before class.
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-lg">
+            <div className="text-4xl">🧠</div>
+            <h2 className="mt-4 text-2xl font-bold text-cyan-300">
+              Understand
+            </h2>
+            <p className="mt-3 text-slate-300">
+              Read clear English meanings for each vocabulary word.
             </p>
+          </div>
 
-            {wordBank.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/20 p-6 text-slate-400">
-                No saved words yet. Search a word and add it to your word bank.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {wordBank.map((item) => (
-                  <div
-                    key={item.word}
-                    className="rounded-2xl border border-white/10 bg-slate-900 p-4"
-                  >
-                    <div className="mb-2 flex items-center justify-between">
-                      <h3 className="text-xl font-bold capitalize">
-                        {item.word}
-                      </h3>
-                      <span className="rounded-full bg-cyan-400/20 px-3 py-1 text-sm text-cyan-200">
-                        {item.chinese}
-                      </span>
-                    </div>
+          <div className="rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-lg">
+            <div className="text-4xl">🌐</div>
+            <h2 className="mt-4 text-2xl font-bold text-purple-300">
+              Translate
+            </h2>
+            <p className="mt-3 text-slate-300">
+              Show Chinese meanings when a word is difficult to understand.
+            </p>
+          </div>
 
-                    <p className="mb-2 text-sm text-slate-300">
-                      {item.meaning}
-                    </p>
-
-                    <p className="rounded-xl bg-white/10 p-3 text-sm text-slate-100">
-                      {item.example}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
+          <div className="rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-lg">
+            <div className="text-4xl">✍️</div>
+            <h2 className="mt-4 text-2xl font-bold text-emerald-300">
+              Practice
+            </h2>
+            <p className="mt-3 text-slate-300">
+              Review examples and connect words with real cloud situations.
+            </p>
+          </div>
         </div>
 
-        <section className="mt-6 rounded-3xl border border-white/10 bg-white/10 p-6">
-          <h2 className="mb-3 text-2xl font-bold">Presentation Summary</h2>
+        <section className="mt-14">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">📚</span>
+            <h2 className="text-3xl font-bold">Vocabulary Learning Cards</h2>
+          </div>
 
-          <p className="leading-8 text-slate-300">
-            This project helps students learn English vocabulary used in cloud
-            computing courses. The app has three main features: it translates an
-            English cloud word into Chinese, shows an example sentence, and lets
-            students save difficult words into a personal word bank for daily
-            review.
-          </p>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {learnWords.map((word) => {
+              const showChinese = visibleChineseWords.includes(word.word);
+
+              return (
+                <div
+                  key={word.word}
+                  className="rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-lg"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-4xl font-bold">📌 {word.word}</h3>
+                      <p className="mt-2 text-cyan-300">{word.level}</p>
+                    </div>
+                  </div>
+
+                  <h4 className="mt-6 font-bold">💡 English Meaning</h4>
+                  <p className="mt-2 leading-7 text-slate-300">
+                    {word.englishMeaning}
+                  </p>
+
+                  <h4 className="mt-6 font-bold">📝 Example</h4>
+                  <p className="mt-2 leading-7 text-slate-300">
+                    {word.example}
+                  </p>
+
+                  {showChinese && (
+                    <div className="mt-6 rounded-2xl border border-purple-400/40 bg-purple-400/10 p-4">
+                      <h4 className="font-bold text-purple-300">
+                        🌐 Chinese Meaning
+                      </h4>
+                      <p className="mt-2 text-slate-200">
+                        {word.chineseMeaning}
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => toggleChinese(word.word)}
+                    className="mt-6 rounded-xl bg-purple-400 px-5 py-3 font-semibold text-slate-950 shadow-md transition hover:scale-105 hover:bg-purple-300"
+                  >
+                    {showChinese ? "🙈 Hide Chinese" : "🌐 Show Chinese"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </section>
       </section>
     </main>
